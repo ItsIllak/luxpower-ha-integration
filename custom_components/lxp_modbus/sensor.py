@@ -20,7 +20,7 @@ from .constants.hold_registers import H_PV_INPUT_MODEL
 from .entity import ModbusBridgeEntity
 from .utils import ALL_PV_STRINGS, active_pv_strings
 from .entity_descriptions.sensor_types import SENSOR_TYPES, BATTERY_SENSOR_TYPES
-from .entity_descriptions.number_types import NUMBER_TYPES
+from .entity_descriptions.number_types import get_number_types
 from .entity_descriptions.selectbox_types import SELECTBOX_TYPES
 from .entity_descriptions.switch_types import SWITCH_TYPES
 from .entity_descriptions.time_types import TIME_TYPES
@@ -52,6 +52,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     entity_prefix = hass.data[DOMAIN][entry.entry_id]['settings'].get(CONF_ENTITY_PREFIX, DEFAULT_ENTITY_PREFIX)
     api_client = hass.data[DOMAIN][entry.entry_id].get("api_client")
+
+    model = entry.data.get("model")
+    number_types = get_number_types(model)
+
     battery_entities_cfg = set(
         hass.data[DOMAIN][entry.entry_id]["settings"]
         .get(CONF_BATTERY_ENTITIES, DEFAULT_BATTERY_ENTITIES)
@@ -78,7 +82,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
         # Combine all control type descriptions into one list to iterate through
         readonly_types = (
-            (NUMBER_TYPES, Platform.NUMBER),
+            (number_types, Platform.NUMBER),
             (SWITCH_TYPES, Platform.SWITCH),
             (SELECTBOX_TYPES, Platform.SELECT),
             (TIME_TYPES, Platform.TIME),

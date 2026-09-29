@@ -4,6 +4,14 @@
 
 from ..constants.hold_registers import *
 
+from copy import deepcopy
+
+from ..utils import inverter_family_prefix
+from ..variant_loader import (
+    load_variant_module,
+    merge_named_definitions,
+)
+
 NUMBER_TYPES = [
     # --- System & Grid ---
     {
@@ -5611,3 +5619,21 @@ NUMBER_TYPES = [
         "device_group": "Schedules",
     },
 ]
+
+def get_number_types(model: str | None) -> list[dict]:
+    """Return shared number entities plus the optional family variant."""
+    family = inverter_family_prefix(model)
+    definitions = deepcopy(NUMBER_TYPES)
+
+    variant = load_variant_module(
+        "custom_components.lxp_modbus.entity_descriptions.number_types",
+        family,
+    )
+
+    if variant and hasattr(variant, "NUMBER_TYPES"):
+        definitions = merge_named_definitions(
+            definitions,
+            variant.NUMBER_TYPES,
+        )
+
+    return definitions

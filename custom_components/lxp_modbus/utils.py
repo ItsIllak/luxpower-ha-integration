@@ -18,6 +18,10 @@ PV_INPUT_MODEL_STRINGS = {
     7: frozenset({1, 2, 3}),
 }
 
+KNOWN_INVERTER_FAMILIES = ("GEN", "LXP")
+MODEL_FAMILY_MAP = {
+    "AHAA": "GEN",
+}
 
 def active_pv_strings(pv_input_model: int | None) -> frozenset[int] | None:
     """Return the PV strings the inverter reports, or None if it cannot be told.
@@ -138,3 +142,19 @@ def energy_balance(registers: dict, add, subtract=()) -> int | None:
         total += sign * value
 
     return total
+
+def inverter_family_prefix(model: str | None) -> str:
+    """Return the register-family prefix for a discovered model."""
+    normalized = (model or "").strip().upper()
+
+    # Explicit model-code mappings take priority.
+    mapped_family = MODEL_FAMILY_MAP.get(normalized)
+    if mapped_family:
+        return mapped_family
+
+    # Fall back to conventional model prefixes.
+    for family in KNOWN_INVERTER_FAMILIES:
+        if normalized.startswith(family):
+            return family
+
+    return "UNKNOWN"

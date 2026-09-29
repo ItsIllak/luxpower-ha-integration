@@ -120,7 +120,11 @@ H_CHARGE_FIRST_END_TIME_1 = 79 # Charging priority period 1 end time.
 H_CHARGE_FIRST_START_TIME_2 = 80 # Charging priority period 2 start time.
 H_CHARGE_FIRST_END_TIME_2 = 81 # Charging priority period 2 end time.
 H_FORCED_DISCHARGE_POWER_CMD = 82 # Forced discharge percentage setting (Unit: %, Range: 0-100).
+
+# GEN models use reg 83 only for FORCED_DISCHARGE_SOC_LIMIT.  LXP pack it with START_TIME, so we have two definitions for it:
 H_FORCED_DISCHARGE_SOC_LIMIT_AND_START_TIME = 83 # Forced discharge SOC limit and Start Hour.
+H_FORCED_DISCHARGE_SOC_LIMIT = 83 # Forced discharge SOC limit and Start Hour.
+
 H_FORCED_DISCHARGE_START_TIME = 84 # Forced discharge start time.
 H_FORCED_DISCHARGE_END_TIME = 85 # Forced discharge end time.
 H_FORCED_DISCHARGE_START_TIME_1 = 86 # Forced discharge period 1 start time.

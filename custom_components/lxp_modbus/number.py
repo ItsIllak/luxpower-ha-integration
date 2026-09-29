@@ -15,7 +15,8 @@ from .const import (
     UNIMPLEMENTED_REGISTER_VALUE,
 )
 from .entity import ModbusBridgeEntity
-from .entity_descriptions.number_types import NUMBER_TYPES
+from .entity_descriptions.number_types import get_number_types
+from .utils import inverter_family_prefix
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,12 +25,23 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     entity_prefix = hass.data[DOMAIN][entry.entry_id]['settings'].get(CONF_ENTITY_PREFIX, DEFAULT_ENTITY_PREFIX)
     api_client = hass.data[DOMAIN][entry.entry_id]["api_client"]
-    
+    model = entry.data.get("model")
+    number_types = get_number_types(model)
+
     entities = [
         ModbusBridgeNumber(coordinator, entry, desc, entity_prefix, api_client)
-        for desc in NUMBER_TYPES
+        for desc in number_types
         if not desc.get("percent_of_rated_power") or rated_power(entry)
     ]
+
+    family = inverter_family_prefix(model)
+
+    _LOGGER.info(
+        "Using %s register variant for inverter model %s",
+        family,
+        model or "unknown",
+    )
+
     async_add_entities(entities)
 
 

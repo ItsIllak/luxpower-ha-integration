@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+from .utils import inverter_family_prefix
 
 from .const import (
     DOMAIN,
@@ -42,6 +43,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     dongle_serial = entry.data[CONF_DONGLE_SERIAL]
     inverter_serial = entry.data[CONF_INVERTER_SERIAL]
     poll_interval = entry.data[CONF_POLL_INTERVAL]
+
+    model = entry.data.get("model")
+    family = inverter_family_prefix(model)
+
+    _LOGGER.debug(
+        "Selected %s register family for inverter model %s",
+        family,
+        model or "unknown",
+    )
 
     # Determine if battery data should be requested
     battery_entities = entry.data.get(CONF_BATTERY_ENTITIES, DEFAULT_BATTERY_ENTITIES).replace(" ", "").split(",")
