@@ -5637,3 +5637,10 @@ def get_number_types(model: str | None) -> list[dict]:
         )
 
     return definitions
+
+async def async_get_number_types(hass, model: str | None) -> list[dict]:
+    """Load number definitions without blocking Home Assistant's event loop."""
+    return await hass.async_add_executor_job(
+        get_number_types,
+        model,
+    )

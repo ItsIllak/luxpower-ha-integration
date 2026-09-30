@@ -68,7 +68,7 @@ def test_gen_variant_does_not_change_other_number_entities():
     gen = get_number_types("GEN-5K")
 
     base_names = [item["name"] for item in base]
-gen_names = [item["name"] for item in gen]
+    gen_names = [item["name"] for item in gen]
 
     assert gen_names == base_names
 

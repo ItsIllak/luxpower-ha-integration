@@ -15,7 +15,7 @@ from .const import (
     UNIMPLEMENTED_REGISTER_VALUE,
 )
 from .entity import ModbusBridgeEntity
-from .entity_descriptions.number_types import get_number_types
+from .entity_descriptions.number_types import async_get_number_types
 from .utils import inverter_family_prefix
 
 _LOGGER = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entity_prefix = hass.data[DOMAIN][entry.entry_id]['settings'].get(CONF_ENTITY_PREFIX, DEFAULT_ENTITY_PREFIX)
     api_client = hass.data[DOMAIN][entry.entry_id]["api_client"]
     model = entry.data.get("model")
-    number_types = get_number_types(model)
+    number_types = await async_get_number_types(hass, model)
 
     entities = [
         ModbusBridgeNumber(coordinator, entry, desc, entity_prefix, api_client)
